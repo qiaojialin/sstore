@@ -42,7 +42,7 @@ public class StreamWindowManager implements Serializable {
     private final WindowOperator[] operators;
     private final SerDe serde;
 
-    public StreamWindowManager(long streamID, WindowOperator[] operators, boolean keepReadIndex) {
+    public StreamWindowManager(long streamID, WindowOperator[] operators) {
         this.streamID = streamID;
         this.operators = operators;
         this.serde = new SerDe(operators);

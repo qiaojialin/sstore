@@ -22,7 +22,7 @@ public class QueryTest {
         stream = Utilities.deserialize(backingStore.getAux(streamId+""));
         stream.load(directory, true, backingStore);
 
-        Object result = query(stream, 0, 1000, 0);
+        Object result = query(stream, 0, 10000, 0);
 
         System.out.println(result);
 

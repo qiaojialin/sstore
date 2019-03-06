@@ -3,7 +3,6 @@ import com.samsung.sra.datastore.aggregates.SimpleCountOperator;
 import com.samsung.sra.datastore.ingest.CountBasedWBMH;
 import com.samsung.sra.datastore.storage.BackingStore;
 import com.samsung.sra.datastore.storage.BackingStoreException;
-import com.samsung.sra.datastore.storage.MainMemoryBackingStore;
 import com.samsung.sra.datastore.storage.RocksDBBackingStore;
 
 import java.io.File;
@@ -11,47 +10,56 @@ import java.io.IOException;
 
 public class InsertTest {
 
-    private static String directory = "sstore";
-    private static Stream stream = null;
-    private static BackingStore backingStore = null;
-    private static long streamId = 1;
-
     public static void main(String[] args) throws BackingStoreException, IOException, StreamException {
 
+        String directory = "sstore";
+        BackingStore backingStore = initBackingStore(directory);
+
+        long streamId = 1;
+
+        Stream stream = initStream(backingStore, streamId);
+
+        for(long i = 1; i < 100000; i++) {
+            stream.append(i, i);
+            if(i % 10000 == 0) {
+                flush(stream);
+            }
+        }
+
+        close(directory, backingStore, stream, streamId);
+
+    }
+
+
+    private static BackingStore initBackingStore(String directory) throws BackingStoreException {
+        File dir = new File(directory);
+        if (!dir.exists()) {
+            boolean created = dir.mkdirs();
+            assert created;
+        }
+        return new RocksDBBackingStore(directory + "/rocksdb", 0, false);
+
+    }
+
+    private static Stream initStream(BackingStore backingStore, long streamId) {
         // WBMH
         Windowing windowing = new GenericWindowing(new ExponentialWindowLengths(2));
         CountBasedWBMH wbmh = new CountBasedWBMH(windowing).setBufferSize(62);
 
-        backingStore = getBackingStore();
-
         WindowOperator[] windowOperators = new WindowOperator[]{new SimpleCountOperator()};
-        stream = new Stream(streamId, false, wbmh, windowOperators, false);
+        Stream stream = new Stream(streamId, wbmh, windowOperators);
+
         stream.populateTransientFields(backingStore);
-
-        for(long i = 0; i < 1000; i++) {
-            stream.append(i, i);
-        }
-
-        close();
-
+        return stream;
     }
 
 
-    public static BackingStore getBackingStore() throws BackingStoreException {
-        if (directory != null) {
-            File dir = new File(directory);
-            if (!dir.exists()) {
-                boolean created = dir.mkdirs();
-                assert created;
-            }
-            return new RocksDBBackingStore(directory + "/rocksdb", 0, false);
-        } else {
-            return new MainMemoryBackingStore();
-        }
+    private static void flush(Stream stream) throws BackingStoreException {
+        stream.flush();
     }
 
 
-    private static void close() throws BackingStoreException, IOException {
+    private static void close(String directory, BackingStore backingStore, Stream stream, long streamId) throws BackingStoreException, IOException {
         stream.flush();
         stream.unload(directory);
         stream.close();

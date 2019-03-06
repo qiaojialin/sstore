@@ -67,7 +67,7 @@ public class Stream implements Serializable {
         }
     }
 
-    public Stream(long streamID, boolean synchronizeWrites, CountBasedWBMH wbmh, WindowOperator[] operators, boolean keepReadIndex) {
+    public Stream(long streamID, CountBasedWBMH wbmh, WindowOperator[] operators) {
         this.streamID = streamID;
         this.operators = operators;
         for (int i = 0; i < operators.length; ++i) {
@@ -79,7 +79,7 @@ public class Stream implements Serializable {
             }
         }
         this.wbmh = wbmh;
-        windowManager = new StreamWindowManager(streamID, operators, keepReadIndex);
+        windowManager = new StreamWindowManager(streamID, operators);
         stats = new StreamStatistics();
         loaded = true;
     }
