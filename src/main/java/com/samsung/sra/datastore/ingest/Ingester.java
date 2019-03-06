@@ -22,7 +22,11 @@ import java.util.concurrent.BlockingQueue;
 
 /** Ingest values into initially empty buffers, and once buffers fill up move them to Summarizer's queue */
 class Ingester implements Serializable {
+
+    // data first put into the active buffer in empty buffer
     private final BlockingQueue<IngestBuffer> emptyBuffers; // input queue
+
+    // once an avtice buffer is full, put it into summary buffer for summary
     private final BlockingQueue<IngestBuffer> summarizerQueue; // output queue
 
     private volatile IngestBuffer activeBuffer = null;

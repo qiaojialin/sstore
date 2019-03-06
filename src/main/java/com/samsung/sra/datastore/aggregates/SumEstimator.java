@@ -158,11 +158,6 @@ class SumEstimator {
             CIl = lowerbound;
             CIr = upperbound;
         } else {
-            /*double cv_t = streamStats.getCVInterarrival(), cv_v = streamStats.getCVValue();
-            double mu_v = streamStats.getMeanValue();
-            double sd = Math.sqrt((cv_t * cv_t + cv_v * cv_v) * Math.sqrt(mu_v * var.toDouble()));
-            logger.trace("cv_t = {}, cv_v = {}, mu_v = {}, var = {}, sd = {}",
-                    cv_t, cv_v, mu_v, var, sd);*/
             double sd = sdMultiplier * Math.sqrt(var);
             CIl = Math.max(ans - numSDs * sd, lowerbound);
             CIr = Math.min(ans + numSDs * sd, upperbound);

@@ -23,6 +23,7 @@ import com.samsung.sra.protocol.SummaryStore;
 import java.io.Serializable;
 
 class SerDe implements Serializable {
+
     private final WindowOperator[] operators;
 
     SerDe(WindowOperator[] operators) {

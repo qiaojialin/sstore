@@ -57,6 +57,8 @@ class Writer implements Runnable, Serializable {
                     flushBarrier.notify(CountBasedWBMH.FlushBarrier.WRITER);
                     continue;
                 }
+
+                // write to RocksDB
                 windowManager.putSummaryWindow(window);
                 Utilities.put(newWindowNotifications, new Merger.WindowInfo(window.ts, window.ce - window.cs + 1));
             }

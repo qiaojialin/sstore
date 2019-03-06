@@ -27,7 +27,7 @@ public class SummaryWindow implements Serializable {
        non-negative (all three are 0-indexed); use "-1" to indicate null values. */
     public long ts, te, cs, ce;
 
-    // data
+    // data,,,  [count value, ...]
     public Object[] aggregates;
 
     public SummaryWindow() {}

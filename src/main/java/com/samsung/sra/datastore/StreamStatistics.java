@@ -20,8 +20,8 @@ import java.io.Serializable;
 public class StreamStatistics implements Serializable {
     private long firstArrivalTimestamp = -1, lastArrivalTimestamp = -1;
     private long numValues = 0;
-    private double Isum = 0, Isqsum = 0;
-    private double Vsum = 0, Vsqsum = 0;
+    private double Isum = 0, Isqsum = 0; // sum(time interval)     sum(time interval^2)
+    private double Vsum = 0, Vsqsum = 0; // sum(value)   sum(value^2)
 
     public StreamStatistics() {
     }

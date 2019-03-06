@@ -37,6 +37,8 @@ public class StreamWindowManager implements Serializable {
 
     private transient BackingStore backingStore;
     public final long streamID;
+
+    // summary information container
     private final WindowOperator[] operators;
     private final SerDe serde;
 
