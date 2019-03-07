@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
@@ -90,18 +89,6 @@ public class StreamWindowManager implements Serializable {
 
     public void putSummaryWindow(SummaryWindow window) throws BackingStoreException {
         backingStore.putSummaryWindow(streamID, window.ts, serde, window);
-    }
-
-    public long getNumSummaryWindows() throws BackingStoreException {
-        return backingStore.getNumSummaryWindows(streamID, serde);
-    }
-
-
-    public void printWindows() throws BackingStoreException {
-        //backingStore.printWindowState(this);
-        System.out.printf("Stream %d with %d summary windows\n", streamID, getNumSummaryWindows());
-        Consumer<Object> printTabbed = o -> System.out.println("\t" + o);
-        getSummaryWindowsOverlapping(0, Long.MAX_VALUE - 10).forEach(printTabbed);
     }
 
     public void flushToDisk() throws BackingStoreException {

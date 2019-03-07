@@ -62,10 +62,6 @@ public class StreamStatistics implements Serializable {
         return lastArrivalTimestamp;
     }
 
-    public long getNumValues() {
-        return numValues;
-    }
-
     public double getMeanInterarrival() {
         // note that # interarrivals = numValues - 1
         return numValues > 1 ? Isum / (numValues - 1) : 0;
@@ -79,18 +75,4 @@ public class StreamStatistics implements Serializable {
         return getSDInterarrival() / getMeanInterarrival();
     }
 
-    /** WARNING: silently returns 0 in non-numeric streams */
-    public double getMeanValue() {
-        return numValues > 0 ? Vsum / numValues : 0;
-    }
-
-    /** WARNING: silently returns 0 in non-numeric streams */
-    public double getSDValue() {
-        return numValues > 1 ? Math.sqrt((Vsqsum - Vsum * Vsum / numValues) / (numValues - 1d)) : 0;
-    }
-
-    /** WARNING: undefined behavior in non-numeric streams */
-    public double getCVValue() {
-        return getSDValue() / getMeanValue();
-    }
 }
