@@ -129,6 +129,7 @@ public class RocksDBBackingStore extends BackingStore {
 
     @Override
     SummaryWindow getSummaryWindow(long streamID, long swid, SerDe serDe) throws BackingStoreException {
+        logger.debug("get summary window for merging, windowid:{}", swid);
         ConcurrentHashMap<Long, SummaryWindow> streamCache;
         if (cache == null) {
             streamCache = null;
@@ -159,6 +160,7 @@ public class RocksDBBackingStore extends BackingStore {
     void deleteSummaryWindow(long streamID, long swid, SerDe serDe) throws BackingStoreException {
         assert cache == null;
         try {
+            logger.debug("delete summary window: windowid:{}", swid);
             byte[] key = getRocksDBKey(streamID, swid);
             rocksDB.delete(key);
         } catch (RocksDBException e) {
@@ -172,6 +174,7 @@ public class RocksDBBackingStore extends BackingStore {
         try {
             byte[] key = getRocksDBKey(streamID, swid);
             byte[] value = serDe.serializeSummaryWindow(window);
+            logger.debug("put summary windows into rockdb: windowid:{}, ts:{}, te:{}, aggr:{}", swid, window.ts, window.te, window.aggregates[0]);
             rocksDB.put(rocksDBWriteOptions, key, value);
         } catch (RocksDBException e) {
             throw new BackingStoreException(e);
@@ -287,19 +290,6 @@ public class RocksDBBackingStore extends BackingStore {
         }
     }
 
-    /* **** FIXME: Landmark cache has unbounded size **** */
-
-    private static final int LANDMARK_KEY_SIZE = 17;
-
-    private static byte[] getLandmarkRocksKey(long streamID, long lwid) {
-        byte[] keyArray = new byte[LANDMARK_KEY_SIZE];
-        keyArray[0] = 'L';
-        Utilities.longToByteArray(streamID, keyArray, 1);
-        Utilities.longToByteArray(lwid, keyArray, 9);
-        return keyArray;
-    }
-
-
     private static final int AUX_KEY_MIN_SIZE = 18;
 
     private static byte[] getAuxRocksKey(String auxKey) {
@@ -323,6 +313,7 @@ public class RocksDBBackingStore extends BackingStore {
     @Override
     public void putAux(String key, byte[] value) throws BackingStoreException {
         try {
+            logger.debug("put Aux information into rocksdb: key:{}", key);
             rocksDB.put(getAuxRocksKey(key), value);
         } catch (RocksDBException e) {
             throw new BackingStoreException(e);
@@ -330,8 +321,10 @@ public class RocksDBBackingStore extends BackingStore {
     }
 
     @Override
-    public void close() throws BackingStoreException {
-        if (rocksDB != null) rocksDB.close();
+    public void close() {
+        if (rocksDB != null) {
+            rocksDB.close();
+        }
         rocksDBOptions.close();
         logger.info("rocksDB closed");
     }

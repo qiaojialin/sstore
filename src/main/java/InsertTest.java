@@ -19,7 +19,7 @@ public class InsertTest {
 
         Stream stream = initStream(backingStore, streamId);
 
-        for(long i = 1; i < 100000; i++) {
+        for(long i = 1; i < 100; i++) {
             stream.append(i, i);
             if(i % 10000 == 0) {
                 flush(stream);

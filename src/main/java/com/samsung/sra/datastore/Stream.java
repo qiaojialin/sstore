@@ -142,7 +142,10 @@ public class Stream implements Serializable {
         }
 
         java.util.stream.Stream summaryWindows = windowManager.getSummaryWindowsOverlapping(t0, t1);
+
+        // function:  get value in summary window
         Function<SummaryWindow, Object> summaryRetriever = b -> b.aggregates[operatorNum];
+
         try {
             return operators[operatorNum].query(
                     stats, summaryWindows, summaryRetriever, t0, t1, queryParams);
@@ -155,13 +158,6 @@ public class Stream implements Serializable {
         }
     }
 
-    public long getNumSummaryWindows() throws BackingStoreException {
-        return windowManager.getNumSummaryWindows();
-    }
-
-    public void printWindows() throws BackingStoreException {
-        windowManager.printWindows();
-    }
 
     public void flush() throws BackingStoreException {
         wbmh.flush();
